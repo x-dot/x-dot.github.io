@@ -5,67 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School Timetable</title>
     <style>
-    body {
-        font-family: 'Courier New', Courier, monospace;
-        background-color: #2d2d2d;
-        color: #ffffff;
-        margin: 20px;
-    }
-    h2, h3 {
-        text-align: center;
-        color: #ffffff;
-        font-size: 1.2em;
-    }
-    table {
-        width: 100%;
-        table-layout: auto; /* Allows columns to adjust based on content */
-        border-collapse: collapse;
-        background-color: #333333;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-    }
-    th, td {
-        border: 1px solid #ffffff;
-        padding: 15px;
-        text-align: center;
-        font-size: 1.1em;
-    }
-    th {
-        background-color: #444444;
-        color: #fff;
-        font-weight: bold;
-    }
-    tr:nth-child(even) {
-        background-color: #555555;
-    }
-    tr:hover {
-        background-color: #666666;
-    }
-    .class-info {
-        font-size: 0.9em;
-        color: #f0f0f0;
-    }
-    td div {
-        word-wrap: break-word; /* Allows long words to wrap to the next line */
-    }
-    .subject, .room {
-        display: inline-block;
-        white-space: normal; /* Allows text to wrap instead of being truncated */
-    }
-    .subject {
-        font-weight: bold;
-    }
-    .room {
-        font-style: italic;
-    }
-	input[type="checkbox"] {
-        transform: scale(1.5); /* Increases the size of the checkbox */
-        margin-left: 10px; /* Adds space between the course name and the checkbox */
-    }
-</style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #2d2d2d;
+            color: #ffffff;
+            margin: 20px;
+        }
+        h2, h3 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.2em;
+        }
+        table {
+            width: 100%;
+            table-layout: auto;
+            border-collapse: collapse;
+            background-color: #333333;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        th {
+            background-color: #444444;
+            color: #fff;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #555555;
+        }
+        tr:hover {
+            background-color: #666666;
+        }
+        .class-info {
+            font-size: 0.9em;
+            color: #f0f0f0;
+        }
+        td div {
+            word-wrap: break-word;
+        }
+        .subject, .room {
+            display: inline-block;
+            white-space: normal;
+        }
+        .subject {
+            font-weight: bold;
+        }
+        .room {
+            font-style: italic;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            margin-left: 10px;
+        }
+        .current-day {
+            background-color: #777777 !important;
+        }
+        .current-hour {
+            background-color: #888888 !important;
+        }
+        .current-cell {
+            background-color: #ffcc00 !important; /* Highlight color for the current cell */
+            color: #000000; /* Text color for better visibility */
+        }
+    </style>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             loadTimetable();
+            highlightCurrentDayAndHour();
         });
 
         function editCell(cell) {
@@ -73,6 +84,12 @@
             let room = prompt("Enter classroom:", cell.querySelector(".room").innerText);
             if (subject !== null) cell.querySelector(".subject").innerText = subject;
             if (room !== null) cell.querySelector(".room").innerText = room;
+            saveTimetable();
+        }
+
+        function editTime(cell) {
+            let time = prompt("Enter new time:", cell.innerText);
+            if (time !== null) cell.innerText = time;
             saveTimetable();
         }
 
@@ -95,6 +112,44 @@
                 td.querySelector(".room").innerText = data[index].room;
             });
         }
+
+        function highlightCurrentDayAndHour() {
+            let now = new Date();
+            let currentDay = now.getDay(); // 0 (Sunday) to 6 (Saturday)
+            let currentHour = now.getHours();
+
+            // Map days to table columns (Monday = 1, Tuesday = 2, ..., Sunday = 7)
+            let dayToColumn = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 0: 7 };
+
+            // Highlight current day header
+            let currentDayColumn = dayToColumn[currentDay];
+            if (currentDayColumn) {
+                document.querySelector(`th:nth-child(${currentDayColumn + 1})`).classList.add("current-day");
+            }
+
+            // Highlight current hour row and cell
+            let timeSlots = document.querySelectorAll("td:first-child");
+            timeSlots.forEach((timeSlot, rowIndex) => {
+                let [start, end] = timeSlot.innerText.split(" - ");
+                let startHour = parseInt(start.split(":")[0]);
+                let endHour = parseInt(end.split(":")[0]);
+                let isPM = start.includes("PM"); // Check if the time is in PM
+
+                // Convert to 24-hour format if necessary
+                if (isPM && startHour !== 12) startHour += 12;
+                if (isPM && endHour !== 12) endHour += 12;
+
+                if (currentHour >= startHour && currentHour < endHour) {
+                    timeSlot.classList.add("current-hour");
+                    let row = timeSlot.parentElement;
+                    row.querySelectorAll("td").forEach((td, colIndex) => {
+                        if (colIndex === currentDayColumn) {
+                            td.classList.add("current-cell"); // Highlight the specific cell
+                        }
+                    });
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -113,7 +168,7 @@
         <th>Sunday</th>
     </tr>
     <tr>
-        <td>9:00 AM - 11:00 AM</td>
+        <td onclick="editTime(this)">9:00 AM - 11:00 AM</td>
         <td data-index="0" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 101</div></td>
         <td data-index="1" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 102</div></td>
         <td data-index="2" onclick="editCell(this)"><div class="subject">History</div><div class="room class-info">Room 103</div></td>
@@ -123,7 +178,7 @@
         <td data-index="6" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
-        <td>11:00 AM - 1:00 PM</td>
+        <td onclick="editTime(this)">11:00 AM - 1:00 PM</td>
         <td data-index="7" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
         <td data-index="8" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
         <td data-index="9" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
@@ -133,7 +188,7 @@
         <td data-index="13" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
-        <td>1:00 PM - 3:00 PM</td>
+        <td onclick="editTime(this)">1:00 PM - 3:00 PM</td>
         <td data-index="14" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
         <td data-index="15" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
         <td data-index="16" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
@@ -143,7 +198,7 @@
         <td data-index="20" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
-        <td>3:00 AM - 5:00 PM</td>
+        <td onclick="editTime(this)">3:00 PM - 5:00 PM</td>
         <td data-index="21" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
         <td data-index="22" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
         <td data-index="23" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
@@ -153,7 +208,7 @@
         <td data-index="27" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
-        <td>5:00 AM - 7:00 PM</td>
+        <td onclick="editTime(this)">5:00 PM - 7:00 PM</td>
         <td data-index="28" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
         <td data-index="29" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
         <td data-index="30" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
@@ -163,7 +218,7 @@
         <td data-index="34" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
-        <td>7:00 AM - 9:00 PM</td>
+        <td onclick="editTime(this)">7:00 PM - 9:00 PM</td>
         <td data-index="35" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
         <td data-index="36" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
         <td data-index="37" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
