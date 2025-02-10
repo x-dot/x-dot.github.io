@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Timetable</title>
+    <style>
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #2d2d2d;
+        color: #ffffff;
+        margin: 20px;
+    }
+    h2, h3 {
+        text-align: center;
+        color: #ffffff;
+        font-size: 1.2em;
+    }
+    table {
+        width: 100%;
+        table-layout: auto; /* Allows columns to adjust based on content */
+        border-collapse: collapse;
+        background-color: #333333;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    }
+    th, td {
+        border: 1px solid #ffffff;
+        padding: 15px;
+        text-align: center;
+        font-size: 1.1em;
+    }
+    th {
+        background-color: #444444;
+        color: #fff;
+        font-weight: bold;
+    }
+    tr:nth-child(even) {
+        background-color: #555555;
+    }
+    tr:hover {
+        background-color: #666666;
+    }
+    .class-info {
+        font-size: 0.9em;
+        color: #f0f0f0;
+    }
+    td div {
+        word-wrap: break-word; /* Allows long words to wrap to the next line */
+    }
+    .subject, .room {
+        display: inline-block;
+        white-space: normal; /* Allows text to wrap instead of being truncated */
+    }
+    .subject {
+        font-weight: bold;
+    }
+    .room {
+        font-style: italic;
+    }
+	input[type="checkbox"] {
+        transform: scale(1.5); /* Increases the size of the checkbox */
+        margin-left: 10px; /* Adds space between the course name and the checkbox */
+    }
+</style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadTimetable();
+        });
+
+        function editCell(cell) {
+            let subject = prompt("Enter new class:", cell.querySelector(".subject").innerText);
+            let room = prompt("Enter classroom:", cell.querySelector(".room").innerText);
+            if (subject !== null) cell.querySelector(".subject").innerText = subject;
+            if (room !== null) cell.querySelector(".room").innerText = room;
+            saveTimetable();
+        }
+
+        function saveTimetable() {
+            let data = [];
+            document.querySelectorAll("td[data-index]").forEach(td => {
+                data.push({
+                    subject: td.querySelector(".subject").innerText,
+                    room: td.querySelector(".room").innerText
+                });
+            });
+            localStorage.setItem("timetable", JSON.stringify(data));
+        }
+
+        function loadTimetable() {
+            let data = JSON.parse(localStorage.getItem("timetable"));
+            if (!data) return;
+            document.querySelectorAll("td[data-index]").forEach((td, index) => {
+                td.querySelector(".subject").innerText = data[index].subject;
+                td.querySelector(".room").innerText = data[index].room;
+            });
+        }
+    </script>
+</head>
+<body>
+
+<h2>School Timetable (9:00 AM - 9:00 PM)</h2>
+
+<table>
+    <tr>
+        <th>Time</th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+        <th>Saturday</th>
+        <th>Sunday</th>
+    </tr>
+    <tr>
+        <td>9:00 AM - 11:00 AM</td>
+        <td data-index="0" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 101</div></td>
+        <td data-index="1" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 102</div></td>
+        <td data-index="2" onclick="editCell(this)"><div class="subject">History</div><div class="room class-info">Room 103</div></td>
+        <td data-index="3" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 104</div></td>
+        <td data-index="4" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 105</div></td>
+        <td data-index="5" onclick="editCell(this)"><div class="subject">History</div><div class="room class-info">Room 106</div></td>
+        <td data-index="6" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
+    </tr>
+    <tr>
+        <td>11:00 AM - 1:00 PM</td>
+        <td data-index="7" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="8" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="9" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="10" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="11" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="12" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="13" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
+    </tr>
+    <tr>
+        <td>1:00 PM - 3:00 PM</td>
+        <td data-index="14" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="15" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="16" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="17" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="18" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="19" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="20" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
+    </tr>
+    <tr>
+        <td>3:00 AM - 5:00 PM</td>
+        <td data-index="21" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="22" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="23" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="24" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="25" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="26" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="27" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
+    </tr>
+    <tr>
+        <td>5:00 AM - 7:00 PM</td>
+        <td data-index="28" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="29" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="30" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="31" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="32" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="33" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="34" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
+    </tr>
+    <tr>
+        <td>7:00 AM - 9:00 PM</td>
+        <td data-index="35" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="36" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="37" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="38" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="39" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="40" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="41" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
+    </tr>
+</table>
+
+<h3>Additional Courses (Total: 13)</h3>
+<ul>
+    <li><strong>Β' εξάμηνο</strong></li>
+    <li>Δομές Δεδομένων <input type="checkbox"></li>
+    <li>Διακριτά Μαθηματικά <input type="checkbox"></li>
+    <li>Πιθανότητες <input type="checkbox"></li>
+    <li><strong>Δ' εξάμηνο</strong></li>
+    <li>Εισαγωγή στα Πληροφοριακά Συστήματα <input type="checkbox"></li>
+    <li>Ασφάλεια Υπολογιστών και Προστασία Δεδομένων <input type="checkbox"></li>
+    <li><strong>ΣΤ' εξάμηνο</strong></li>
+    <li>Συστήματα Υποστήριξης Αποφάσεων <input type="checkbox"></li>
+    <li>Αναγνώριση Προτύπων <input type="checkbox"></li>
+    <li>Ανάκτηση Πληροφορίας <input type="checkbox"></li>
+    <li>Τεχνολογίες Διαδικτύου <input type="checkbox"></li>
+    <li><strong>Η' εξάμηνο</strong></li>
+    <li>Στρατηγική & Διοίκηση Πληροφοριακών Συστημάτων <input type="checkbox"></li>
+    <li>Επεξεργασία Ομιλίας και Ήχου <input type="checkbox"></li>
+    <li>Διοίκηση Ασφάλειας Πληροφοριακών Συστημάτων <input type="checkbox"></li>
+    <li>Σημασιολογικός και Κοινωνικός Ιστός <input type="checkbox"></li>
+</ul>
+</body>
+</html>
