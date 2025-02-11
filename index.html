@@ -74,83 +74,182 @@
     </style>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            loadTimetable();
-            highlightCurrentDayAndHour();
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log("DOM fully loaded and parsed"); // Debugging
+        loadTimetable();
+        highlightCurrentDayAndHour();
+        loadAdditionalCourses(); // Load additional courses
+
+        // Add event listeners for checkboxes
+        document.querySelectorAll("#additional-courses input[type='checkbox']").forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+                console.log("Checkbox toggled:", this.checked); // Debugging
+                saveAdditionalCourses();
+            });
+        });
+    });
+
+    function editCell(cell) {
+        let subject = prompt("Enter new class:", cell.querySelector(".subject").innerText);
+        let room = prompt("Enter classroom:", cell.querySelector(".room").innerText);
+        if (subject !== null) cell.querySelector(".subject").innerText = subject;
+        if (room !== null) cell.querySelector(".room").innerText = room;
+        saveTimetable();
+    }
+
+    function editTime(cell) {
+        let time = prompt("Enter new time:", cell.innerText);
+        if (time !== null) {
+            cell.innerText = time;
+            saveTimetable();
+        }
+    }
+
+    function saveTimetable() {
+        let data = {
+            times: [],
+            classes: []
+        };
+
+        // Save time slots
+        document.querySelectorAll("td:first-child").forEach(td => {
+            data.times.push(td.innerText);
         });
 
-        function editCell(cell) {
-            let subject = prompt("Enter new class:", cell.querySelector(".subject").innerText);
-            let room = prompt("Enter classroom:", cell.querySelector(".room").innerText);
-            if (subject !== null) cell.querySelector(".subject").innerText = subject;
-            if (room !== null) cell.querySelector(".room").innerText = room;
-            saveTimetable();
-        }
-
-        function editTime(cell) {
-            let time = prompt("Enter new time:", cell.innerText);
-            if (time !== null) cell.innerText = time;
-            saveTimetable();
-        }
-
-        function saveTimetable() {
-            let data = [];
-            document.querySelectorAll("td[data-index]").forEach(td => {
-                data.push({
-                    subject: td.querySelector(".subject").innerText,
-                    room: td.querySelector(".room").innerText
-                });
+        // Save class information
+        document.querySelectorAll("td[data-index]").forEach(td => {
+            data.classes.push({
+                subject: td.querySelector(".subject").innerText,
+                room: td.querySelector(".room").innerText
             });
-            localStorage.setItem("timetable", JSON.stringify(data));
-        }
+        });
 
-        function loadTimetable() {
-            let data = JSON.parse(localStorage.getItem("timetable"));
-            if (!data) return;
-            document.querySelectorAll("td[data-index]").forEach((td, index) => {
-                td.querySelector(".subject").innerText = data[index].subject;
-                td.querySelector(".room").innerText = data[index].room;
-            });
-        }
+        localStorage.setItem("timetable", JSON.stringify(data));
+    }
 
-        function highlightCurrentDayAndHour() {
-            let now = new Date();
-            let currentDay = now.getDay(); // 0 (Sunday) to 6 (Saturday)
-            let currentHour = now.getHours();
+    function loadTimetable() {
+        let savedData = JSON.parse(localStorage.getItem("timetable"));
+        if (!savedData) return;
 
-            // Map days to table columns (Monday = 1, Tuesday = 2, ..., Sunday = 7)
-            let dayToColumn = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 0: 7 };
-
-            // Highlight current day header
-            let currentDayColumn = dayToColumn[currentDay];
-            if (currentDayColumn) {
-                document.querySelector(`th:nth-child(${currentDayColumn + 1})`).classList.add("current-day");
+        // Load time slots
+        document.querySelectorAll("td:first-child").forEach((td, index) => {
+            if (savedData.times[index]) {
+                td.innerText = savedData.times[index];
             }
+        });
 
-            // Highlight current hour row and cell
-            let timeSlots = document.querySelectorAll("td:first-child");
-            timeSlots.forEach((timeSlot, rowIndex) => {
-                let [start, end] = timeSlot.innerText.split(" - ");
-                let startHour = parseInt(start.split(":")[0]);
-                let endHour = parseInt(end.split(":")[0]);
-                let isPM = start.includes("PM"); // Check if the time is in PM
+        // Load class information
+        document.querySelectorAll("td[data-index]").forEach((td, index) => {
+            if (savedData.classes[index]) {
+                td.querySelector(".subject").innerText = savedData.classes[index].subject;
+                td.querySelector(".room").innerText = savedData.classes[index].room;
+            }
+        });
+    }
 
-                // Convert to 24-hour format if necessary
-                if (isPM && startHour !== 12) startHour += 12;
-                if (isPM && endHour !== 12) endHour += 12;
+    function highlightCurrentDayAndHour() {
+        let now = new Date();
+        let currentDay = now.getDay(); // 0 (Sunday) to 6 (Saturday)
+        let currentHour = now.getHours();
+        let currentMinute = now.getMinutes();
 
-                if (currentHour >= startHour && currentHour < endHour) {
-                    timeSlot.classList.add("current-hour");
-                    let row = timeSlot.parentElement;
-                    row.querySelectorAll("td").forEach((td, colIndex) => {
-                        if (colIndex === currentDayColumn) {
-                            td.classList.add("current-cell"); // Highlight the specific cell
-                        }
-                    });
-                }
-            });
+        // Map days to table columns (Monday = 1, Tuesday = 2, ..., Sunday = 7)
+        let dayToColumn = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 0: 7 };
+
+        // Highlight current day header
+        let currentDayColumn = dayToColumn[currentDay];
+        if (currentDayColumn) {
+            document.querySelector(`th:nth-child(${currentDayColumn + 1})`).classList.add("current-day");
         }
-    </script>
+
+        // Highlight current hour row and cell
+        let timeSlots = document.querySelectorAll("td:first-child");
+        timeSlots.forEach((timeSlot, rowIndex) => {
+            let [start, end] = timeSlot.innerText.split(" - ");
+            let startTime = convertTo24HourFormat(start);
+            let endTime = convertTo24HourFormat(end);
+
+            // Convert current time to total minutes for easier comparison
+            let currentTimeInMinutes = currentHour * 60 + currentMinute;
+            let startTimeInMinutes = startTime.hours * 60 + startTime.minutes;
+            let endTimeInMinutes = endTime.hours * 60 + endTime.minutes;
+
+            // Check if the current time falls within this time slot
+            if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes) {
+                timeSlot.classList.add("current-hour");
+                let row = timeSlot.parentElement;
+                row.querySelectorAll("td").forEach((td, colIndex) => {
+                    if (colIndex === currentDayColumn) {
+                        td.classList.add("current-cell"); // Highlight the specific cell
+                    }
+                });
+            }
+        });
+    }
+
+    // Helper function to convert time to 24-hour format
+    function convertTo24HourFormat(time) {
+        let [timePart, modifier] = time.split(" ");
+        let [hours, minutes] = timePart.split(":");
+
+        if (modifier === "PM" && hours !== "12") {
+            hours = parseInt(hours, 10) + 12;
+        }
+        if (modifier === "AM" && hours === "12") {
+            hours = "00";
+        }
+
+        return {
+            hours: parseInt(hours, 10),
+            minutes: parseInt(minutes, 10)
+        };
+    }
+
+    // Edit text of additional courses and semesters
+    function editText(element) {
+        let newText = prompt("Enter new text:", element.innerText);
+        if (newText !== null) {
+            element.innerText = newText;
+            saveAdditionalCourses();
+        }
+    }
+
+    // Save additional courses and semesters
+    function saveAdditionalCourses() {
+        console.log("saveAdditionalCourses called"); // Debugging
+        let courses = [];
+        document.querySelectorAll("#additional-courses li").forEach(li => {
+            let text = li.querySelector("span, strong")?.innerText || "";
+            let checked = li.querySelector("input[type='checkbox']")?.checked || false;
+            console.log("Course:", text, "Checked:", checked); // Debugging
+            courses.push({ text, checked });
+        });
+        console.log("Saving courses:", courses); // Debugging
+        localStorage.setItem("additionalCourses", JSON.stringify(courses));
+    }
+
+    // Load additional courses and semesters
+    function loadAdditionalCourses() {
+        console.log("loadAdditionalCourses called"); // Debugging
+        let savedCourses = JSON.parse(localStorage.getItem("additionalCourses"));
+        console.log("Loaded courses:", savedCourses); // Debugging
+        if (!savedCourses) return;
+
+        document.querySelectorAll("#additional-courses li").forEach((li, index) => {
+            let course = savedCourses[index];
+            if (course) {
+                let textElement = li.querySelector("span, strong");
+                if (textElement) {
+                    textElement.innerText = course.text;
+                }
+                let checkbox = li.querySelector("input[type='checkbox']");
+                if (checkbox) {
+                    checkbox.checked = course.checked;
+                }
+            }
+        });
+    }
+</script>
 </head>
 <body>
 
@@ -229,25 +328,25 @@
     </tr>
 </table>
 
-<h3>Additional Courses (Total: 13)</h3>
-<ul>
-    <li><strong>Β' εξάμηνο</strong></li>
-    <li>Δομές Δεδομένων <input type="checkbox"></li>
-    <li>Διακριτά Μαθηματικά <input type="checkbox"></li>
-    <li>Πιθανότητες <input type="checkbox"></li>
-    <li><strong>Δ' εξάμηνο</strong></li>
-    <li>Εισαγωγή στα Πληροφοριακά Συστήματα <input type="checkbox"></li>
-    <li>Ασφάλεια Υπολογιστών και Προστασία Δεδομένων <input type="checkbox"></li>
-    <li><strong>ΣΤ' εξάμηνο</strong></li>
-    <li>Συστήματα Υποστήριξης Αποφάσεων <input type="checkbox"></li>
-    <li>Αναγνώριση Προτύπων <input type="checkbox"></li>
-    <li>Ανάκτηση Πληροφορίας <input type="checkbox"></li>
-    <li>Τεχνολογίες Διαδικτύου <input type="checkbox"></li>
-    <li><strong>Η' εξάμηνο</strong></li>
-    <li>Στρατηγική & Διοίκηση Πληροφοριακών Συστημάτων <input type="checkbox"></li>
-    <li>Επεξεργασία Ομιλίας και Ήχου <input type="checkbox"></li>
-    <li>Διοίκηση Ασφάλειας Πληροφοριακών Συστημάτων <input type="checkbox"></li>
-    <li>Σημασιολογικός και Κοινωνικός Ιστός <input type="checkbox"></li>
+<h3>Additional Courses</h3>
+<ul id="additional-courses">
+    <li><strong onclick="editText(this)">Β' εξάμηνο</strong></li>
+    <li><span onclick="editText(this)">Δομές Δεδομένων</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Διακριτά Μαθηματικά</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Πιθανότητες</span> <input type="checkbox"></li>
+    <li><strong onclick="editText(this)">Δ' εξάμηνο</strong></li>
+    <li><span onclick="editText(this)">Εισαγωγή στα Πληροφοριακά Συστήματα</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Ασφάλεια Υπολογιστών και Προστασία Δεδομένων</span> <input type="checkbox"></li>
+    <li><strong onclick="editText(this)">ΣΤ' εξάμηνο</strong></li>
+    <li><span onclick="editText(this)">Συστήματα Υποστήριξης Αποφάσεων</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Αναγνώριση Προτύπων</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Ανάκτηση Πληροφορίας</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Τεχνολογίες Διαδικτύου</span> <input type="checkbox"></li>
+    <li><strong onclick="editText(this)">Η' εξάμηνο</strong></li>
+    <li><span onclick="editText(this)">Στρατηγική & Διοίκηση Πληροφοριακών Συστημάτων</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Επεξεργασία Ομιλίας και Ήχου</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Διοίκηση Ασφάλειας Πληροφοριακών Συστημάτων</span> <input type="checkbox"></li>
+    <li><span onclick="editText(this)">Σημασιολογικός και Κοινωνικός Ιστός</span> <input type="checkbox"></li>
 </ul>
 </body>
 </html>
