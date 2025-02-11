@@ -249,6 +249,11 @@
             }
         });
     }
+	function clearLocalStorage() {
+            localStorage.clear(); // Clear all data in localStorage
+            alert("All saved data has been cleared. The page will now reload.");
+            location.reload(); // Reload the page to reflect the changes
+			}
 </script>
 </head>
 <body>
@@ -278,53 +283,53 @@
     </tr>
     <tr>
         <td onclick="editTime(this)">11:00 AM - 1:00 PM</td>
-        <td data-index="7" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">.</div></td>
-        <td data-index="8" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">.</div></td>
-        <td data-index="9" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">.</div></td>
-        <td data-index="10" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">.</div></td>
-        <td data-index="11" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">.</div></td>
-        <td data-index="12" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">.</div></td>
-        <td data-index="13" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">-</div></td>
+        <td data-index="7" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="8" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="9" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="10" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="11" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="12" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="13" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
         <td onclick="editTime(this)">1:00 PM - 3:00 PM</td>
-        <td data-index="14" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">.</div></td>
-        <td data-index="15" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="16" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="17" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="18" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="19" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="20" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">-</div></td>
+        <td data-index="14" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="15" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="16" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="17" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="18" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="19" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="20" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
         <td onclick="editTime(this)">3:00 PM - 5:00 PM</td>
-        <td data-index="21" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="22" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="23" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="24" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="25" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="26" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="27" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">-</div></td>
+        <td data-index="21" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="22" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="23" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="24" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="25" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="26" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="27" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
         <td onclick="editTime(this)">5:00 PM - 7:00 PM</td>
-        <td data-index="28" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="29" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="30" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="31" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="32" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="33" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="34" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">-</div></td>
+        <td data-index="28" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="29" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="30" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="31" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="32" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="33" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="34" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
     <tr>
         <td onclick="editTime(this)">7:00 PM - 9:00 PM</td>
-        <td data-index="35" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="36" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="37" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="38" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="39" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="40" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">. .</div></td>
-        <td data-index="41" onclick="editCell(this)"><div class="subject">.</div><div class="room class-info">-</div></td>
+        <td data-index="35" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 201</div></td>
+        <td data-index="36" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 202</div></td>
+        <td data-index="37" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 203</div></td>
+        <td data-index="38" onclick="editCell(this)"><div class="subject">English</div><div class="room class-info">Room 204</div></td>
+        <td data-index="39" onclick="editCell(this)"><div class="subject">Math</div><div class="room class-info">Room 205</div></td>
+        <td data-index="40" onclick="editCell(this)"><div class="subject">Science</div><div class="room class-info">Room 206</div></td>
+        <td data-index="41" onclick="editCell(this)"><div class="subject">Free</div><div class="room class-info">-</div></td>
     </tr>
 </table>
 
@@ -348,5 +353,10 @@
     <li><span onclick="editText(this)">Διοίκηση Ασφάλειας Πληροφοριακών Συστημάτων</span> <input type="checkbox"></li>
     <li><span onclick="editText(this)">Σημασιολογικός και Κοινωνικός Ιστός</span> <input type="checkbox"></li>
 </ul>
+<div style="text-align: center; margin-top: 20px;">
+        <button onclick="clearLocalStorage()" style="padding: 10px 20px; font-size: 1em; cursor: pointer;">
+            Reset to Original
+        </button>
+    </div>
 </body>
 </html>
